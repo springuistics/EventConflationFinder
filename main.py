@@ -50,8 +50,11 @@ def get_events(filename, spacy_output):
 
     stative_verbs = ["be", "exist", "appear", "feel", "hear", "look", "see", "seem", "belong", "have", "own", "possess",
                      "like", "want", "wish", "prefer", "love", "hate", "make", "become", "meet"]
-    satellites = ["across", "after", "along", "apart", "around", "about", "away", "back", "down", "under", "in", "into",
-                  "off", "on", "onto", "out", "over", "above", "through", "to", "together", "below", "up"]
+    satellites = ["aboard", "about", "above", "across", "after", "against", "ahead", "along", "amid", "among",
+                  "amongst", "around", "aside", "away", "back", "before", "behind", "below", "beneath", "beside",
+                  "between", "beyond", "down", "from", "in", "inside", "into", "near", "off", "on", "onto", "opposite",
+                  "out", "outside", "over", "past", "round", "through", "to", "toward", "towards", "together", "under",
+                  "underneath", "up", "upon"]
     likely_dates = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
                     "November", "December"]
     path_verbs = ["enter", "exit", "return", "descend", "ascend", "rise", "cross", "follow", "depart", "arrive",
