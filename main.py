@@ -49,14 +49,16 @@ def get_events(filename, spacy_output):
         spacy_children.append(kids)
 
     stative_verbs = ["be", "exist", "appear", "feel", "hear", "look", "see", "seem", "belong", "have", "own", "possess",
-                     "like", "want", "wish", "prefer", "love", "hate", "make", "become", "meet"]
+                     "like", "live", "want", "wish", "prefer", "love", "hate", "make", "become", "meet", "depend",
+                     "fit", "touch", "matter", "lay", "lie", "find"]
     satellites = ["aboard", "about", "above", "across", "after", "against", "ahead", "along", "amid", "among",
                   "amongst", "around", "aside", "away", "back", "before", "behind", "below", "beneath", "beside",
                   "between", "beyond", "down", "from", "in", "inside", "into", "near", "off", "on", "onto", "opposite",
                   "out", "outside", "over", "past", "round", "through", "to", "toward", "towards", "together", "under",
                   "underneath", "up", "upon"]
     likely_dates = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
-                    "November", "December"]
+                    "November", "December", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
+                    "Sunday"]
     path_verbs = ["enter", "exit", "return", "descend", "ascend", "rise", "cross", "follow", "depart", "arrive",
                   "advance", "leave", "circle", "pass", "approach", "near", "join", "separate"]
     path_reduplication = ["enter in", "enter into", "exit out", "return back", "ascend up", "rise up", "cross across",
@@ -85,7 +87,6 @@ def get_events(filename, spacy_output):
             list_o_vb_lemmas.append(verb_lemma)
 
     for i in range(0, len(spacy_deps)):
-        dep = spacy_deps[i]
         pos = spacy_pos[i]
         word = spacy_words[i]
         head = spacy_heads[i]
@@ -113,12 +114,23 @@ def get_events(filename, spacy_output):
                 SF_count += 1
                 SF_examples.append(head + ' ' + word)
             elif head in list_o_verbs:
-                if word in ["into", "onto"]:
-                    if spacy_words[i+1] not in likely_dates and spacy_pos[i+1] != "NUM" and spacy_pos[i+1] != "PROPN":
+                if word in ["into", "onto", "on"]:
+                    if spacy_words[i+1] not in likely_dates and spacy_pos[i+1] != "NUM" and spacy_words[i+2] not in ["morning", "evening", "night"] and spacy_pos[i+1] != "PROPN":
                         for y in range(0, len(list_o_verbs)):
                             word_match = list_o_verbs[y]
                             word_lemma = list_o_vb_lemmas[y]
                             if word_match == head and word_lemma not in stative_verbs:
+                                if word_lemma not in path_verbs or (word_lemma + ' ' + word) in path_reduplication:
+                                    SF_count += 1
+                                    SF_examples.append(head + ' ' + word)
+                                    SF_lemma_examples.append(word_lemma + ' ' + word)
+                                    break
+                elif spacy_words[i+1] not in likely_dates and spacy_pos[i+1] != "NUM" and spacy_words[i+2] not in ["morning", "evening", "night"] and spacy_pos[i+1] != "PROPN":
+                    for y in range(0, len(list_o_verbs)):
+                        word_match = list_o_verbs[y]
+                        word_lemma = list_o_vb_lemmas[y]
+                        if word_match == head and word_lemma not in stative_verbs:
+                            if word_lemma not in path_verbs or (word_lemma + ' ' + word) in path_reduplication:
                                 SF_count += 1
                                 SF_examples.append(head + ' ' + word)
                                 SF_lemma_examples.append(word_lemma + ' ' + word)
@@ -133,10 +145,11 @@ def get_events(filename, spacy_output):
                     word_match = list_o_verbs[y]
                     word_lemma = list_o_vb_lemmas[y]
                     if word_match == head and word_lemma not in stative_verbs:
-                        SF_count += 1
-                        SF_examples.append(head + ' ' + word)
-                        SF_lemma_examples.append(word_lemma + ' ' + word)
-                        break
+                        if word_lemma not in path_verbs or (word_lemma + ' ' + word) in path_reduplication:
+                            SF_count += 1
+                            SF_examples.append(head + ' ' + word)
+                            SF_lemma_examples.append(word_lemma + ' ' + word)
+                            break
 
     for i in list_o_vb_lemmas:
         idx = list_o_vb_lemmas.index(i)
