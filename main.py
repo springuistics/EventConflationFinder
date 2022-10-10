@@ -64,7 +64,7 @@ def get_events(filename, spacy_output):
     path_reduplication = ["enter in", "enter into", "exit out", "return back", "ascend up", "rise up", "cross across",
                           "follow after", "advance forward", "leave away", "circle around", "pass by", "join together",
                           "separate apart", "attach on", "attach onto"]
-
+    exceptions = ["punch on", "light on", "use to", "take to"]
 
     SF_count = 0
     Adj_SF_Count = 0
@@ -120,7 +120,10 @@ def get_events(filename, spacy_output):
                             word_match = list_o_verbs[y]
                             word_lemma = list_o_vb_lemmas[y]
                             if word_match == head and word_lemma not in stative_verbs:
-                                if word_lemma not in path_verbs or (word_lemma + ' ' + word) in path_reduplication:
+                                if (word_lemma + ' ' + word) in path_reduplication:
+                                    PR_count += 1
+                                    PR_examples.append(head + ' ' + word)
+                                elif word_lemma not in path_verbs and (word_lemma + ' ' + word) not in exceptions:
                                     SF_count += 1
                                     SF_examples.append(head + ' ' + word)
                                     SF_lemma_examples.append(word_lemma + ' ' + word)
@@ -130,7 +133,10 @@ def get_events(filename, spacy_output):
                         word_match = list_o_verbs[y]
                         word_lemma = list_o_vb_lemmas[y]
                         if word_match == head and word_lemma not in stative_verbs:
-                            if word_lemma not in path_verbs or (word_lemma + ' ' + word) in path_reduplication:
+                            if (word_lemma + ' ' + word) in path_reduplication:
+                                PR_count += 1
+                                PR_examples.append(head + ' ' + word)
+                            elif word_lemma not in path_verbs and (word_lemma + ' ' + word) not in exceptions:
                                 SF_count += 1
                                 SF_examples.append(head + ' ' + word)
                                 SF_lemma_examples.append(word_lemma + ' ' + word)
@@ -145,7 +151,10 @@ def get_events(filename, spacy_output):
                     word_match = list_o_verbs[y]
                     word_lemma = list_o_vb_lemmas[y]
                     if word_match == head and word_lemma not in stative_verbs:
-                        if word_lemma not in path_verbs or (word_lemma + ' ' + word) in path_reduplication:
+                        if (word_lemma + ' ' + word) in path_reduplication:
+                            PR_count += 1
+                            PR_examples.append(head + ' ' + word)
+                        elif word_lemma not in path_verbs and (word_lemma + ' ' + word) not in exceptions:
                             SF_count += 1
                             SF_examples.append(head + ' ' + word)
                             SF_lemma_examples.append(word_lemma + ' ' + word)
@@ -156,15 +165,6 @@ def get_events(filename, spacy_output):
         if i in path_verbs:
             VF_count += 1
             VF_examples.append(list_o_verbs[idx])
-
-    for i in SF_lemma_examples:
-        idx = SF_lemma_examples.index(i)
-        if i in path_reduplication:
-            SF_count -= 1
-            PR_count += 1
-            PR_examples.append(i)
-            SF_examples.pop(idx)
-            SF_lemma_examples.pop(idx)
 
 
 
