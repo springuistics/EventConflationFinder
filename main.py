@@ -34,6 +34,7 @@ def get_events(filename, spacy_output):
     spacy_stop = []
     spacy_heads = []
     spacy_children = []
+    spacy_sentences = []
 
     for idx, token in enumerate(spacy_output):
         spacy_words.append(spacy_output[idx].text)
@@ -43,6 +44,7 @@ def get_events(filename, spacy_output):
         spacy_deps.append(spacy_output[idx].dep_)
         spacy_stop.append(spacy_output[idx].is_stop)
         spacy_heads.append(spacy_output[idx].head)
+        spacy_sentences.append(spacy_output[idx].sent)
         kids = []
         for x in spacy_output[idx].children:
             kids.append(x)
@@ -91,6 +93,9 @@ def get_events(filename, spacy_output):
         word = spacy_words[i]
         head = spacy_heads[i]
         head = f'{head}'
+        the_sentence = spacy_sentences[i]
+        the_sentence = f'{the_sentence}'
+        the_lemma = spacy_lemmas[i]
 
         if pos == "ADJ": #handles adjectives as satellites
             if head in list_o_verbs:
@@ -103,7 +108,7 @@ def get_events(filename, spacy_output):
                             double_match = spacy_words[x]
                             if head == double_match:
                                 Adj_SF_Count += 1
-                                Adj_SF_examples.append(word_match + ' ' + word)
+                                Adj_SF_examples.append(word_match + ' ' + word + '(' + the_sentence + ')')
                                 break
                             else:
                                 x += 1
@@ -112,7 +117,7 @@ def get_events(filename, spacy_output):
         if pos == "ADP" and word in satellites: #handles most satellites
             if head in satellites:
                 SF_count += 1
-                SF_examples.append(head + ' ' + word)
+                SF_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
             elif head in list_o_verbs:
                 if word in ["into", "onto", "on"]:
                     if spacy_words[i+1] not in likely_dates and spacy_pos[i+1] != "NUM" and spacy_words[i+2] not in ["morning", "evening", "night"] and spacy_pos[i+1] != "PROPN":
@@ -125,7 +130,7 @@ def get_events(filename, spacy_output):
                                     PR_examples.append(head + ' ' + word)
                                 elif word_lemma not in path_verbs and (word_lemma + ' ' + word) not in exceptions:
                                     SF_count += 1
-                                    SF_examples.append(head + ' ' + word)
+                                    SF_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
                                     SF_lemma_examples.append(word_lemma + ' ' + word)
                                     break
                 elif spacy_words[i+1] not in likely_dates and spacy_pos[i+1] != "NUM" and spacy_words[i+2] not in ["morning", "evening", "night"] and spacy_pos[i+1] != "PROPN":
@@ -135,17 +140,17 @@ def get_events(filename, spacy_output):
                         if word_match == head and word_lemma not in stative_verbs:
                             if (word_lemma + ' ' + word) in path_reduplication:
                                 PR_count += 1
-                                PR_examples.append(head + ' ' + word)
+                                PR_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
                             elif word_lemma not in path_verbs and (word_lemma + ' ' + word) not in exceptions:
                                 SF_count += 1
-                                SF_examples.append(head + ' ' + word)
+                                SF_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
                                 SF_lemma_examples.append(word_lemma + ' ' + word)
                                 break
 
         if pos == "ADV" and word in satellites: #handles particles marked as adverbs as satellites
             if head in satellites:
                 SF_count += 1
-                SF_examples.append(head + ' ' + word)
+                SF_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
             elif head in list_o_verbs:
                 for y in range(0, len(list_o_verbs)):
                     word_match = list_o_verbs[y]
@@ -153,19 +158,16 @@ def get_events(filename, spacy_output):
                     if word_match == head and word_lemma not in stative_verbs:
                         if (word_lemma + ' ' + word) in path_reduplication:
                             PR_count += 1
-                            PR_examples.append(head + ' ' + word)
+                            PR_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
                         elif word_lemma not in path_verbs and (word_lemma + ' ' + word) not in exceptions:
                             SF_count += 1
-                            SF_examples.append(head + ' ' + word)
+                            SF_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
                             SF_lemma_examples.append(word_lemma + ' ' + word)
                             break
 
-    for i in list_o_vb_lemmas:
-        idx = list_o_vb_lemmas.index(i)
-        if i in path_verbs:
+        if pos == "VERB" and the_lemma in path_verbs:
             VF_count += 1
-            VF_examples.append(list_o_verbs[idx])
-
+            VF_examples.append(word + ' (' + the_sentence + ')')
 
 
     final_SF_string = '; '.join(SF_examples)
