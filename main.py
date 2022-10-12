@@ -62,11 +62,11 @@ def get_events(filename, spacy_output):
                     "November", "December", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
                     "Sunday"]
     path_verbs = ["enter", "exit", "return", "descend", "ascend", "rise", "cross", "follow", "depart", "arrive",
-                  "advance", "leave", "circle", "pass", "approach", "near", "join", "separate"]
+                  "advance", "leave", "circle", "pass", "approach", "near", "join", "separate", "proceed"]
     path_reduplication = ["enter in", "enter into", "exit out", "return back", "ascend up", "rise up", "cross across",
                           "follow after", "advance forward", "leave away", "circle around", "pass by", "join together",
                           "separate apart", "attach on", "attach onto"]
-    exceptions = ["punch on", "light on", "use to", "take to"]
+    exceptions = ["punch on", "light on", "use to", "take to", "talk about"]
 
     SF_count = 0
     Adj_SF_Count = 0
@@ -94,7 +94,8 @@ def get_events(filename, spacy_output):
         head = spacy_heads[i]
         head = f'{head}'
         the_sentence = spacy_sentences[i]
-        the_sentence = f'{the_sentence}'
+        the_sentence = f"{the_sentence}"
+        the_sentence = the_sentence.rstrip()
         the_lemma = spacy_lemmas[i]
 
         if pos == "ADJ": #handles adjectives as satellites
@@ -108,7 +109,7 @@ def get_events(filename, spacy_output):
                             double_match = spacy_words[x]
                             if head == double_match:
                                 Adj_SF_Count += 1
-                                Adj_SF_examples.append(word_match + ' ' + word + '(' + the_sentence + ')')
+                                Adj_SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
                                 break
                             else:
                                 x += 1
@@ -117,7 +118,7 @@ def get_events(filename, spacy_output):
         if pos == "ADP" and word in satellites: #handles most satellites
             if head in satellites:
                 SF_count += 1
-                SF_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
+                SF_examples.append(head + ' ' + word + ' ("' + the_sentence + '")')
             elif head in list_o_verbs:
                 if word in ["into", "onto", "on"]:
                     if spacy_words[i+1] not in likely_dates and spacy_pos[i+1] != "NUM" and spacy_words[i+2] not in ["morning", "evening", "night"] and spacy_pos[i+1] != "PROPN":
@@ -127,10 +128,10 @@ def get_events(filename, spacy_output):
                             if word_match == head and word_lemma not in stative_verbs:
                                 if (word_lemma + ' ' + word) in path_reduplication:
                                     PR_count += 1
-                                    PR_examples.append(head + ' ' + word)
+                                    PR_examples.append(head + ' ' + word + ' ("' + the_sentence + '")')
                                 elif word_lemma not in path_verbs and (word_lemma + ' ' + word) not in exceptions:
                                     SF_count += 1
-                                    SF_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
+                                    SF_examples.append(head + ' ' + word + ' ("' + the_sentence + '")')
                                     SF_lemma_examples.append(word_lemma + ' ' + word)
                                     break
                 elif spacy_words[i+1] not in likely_dates and spacy_pos[i+1] != "NUM" and spacy_words[i+2] not in ["morning", "evening", "night"] and spacy_pos[i+1] != "PROPN":
@@ -140,17 +141,17 @@ def get_events(filename, spacy_output):
                         if word_match == head and word_lemma not in stative_verbs:
                             if (word_lemma + ' ' + word) in path_reduplication:
                                 PR_count += 1
-                                PR_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
+                                PR_examples.append(head + ' ' + word + ' ("' + the_sentence + '")')
                             elif word_lemma not in path_verbs and (word_lemma + ' ' + word) not in exceptions:
                                 SF_count += 1
-                                SF_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
+                                SF_examples.append(head + ' ' + word + ' ("' + the_sentence + '")')
                                 SF_lemma_examples.append(word_lemma + ' ' + word)
                                 break
 
         if pos == "ADV" and word in satellites: #handles particles marked as adverbs as satellites
             if head in satellites:
                 SF_count += 1
-                SF_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
+                SF_examples.append(head + ' ' + word + ' ("' + the_sentence + '")')
             elif head in list_o_verbs:
                 for y in range(0, len(list_o_verbs)):
                     word_match = list_o_verbs[y]
@@ -158,47 +159,29 @@ def get_events(filename, spacy_output):
                     if word_match == head and word_lemma not in stative_verbs:
                         if (word_lemma + ' ' + word) in path_reduplication:
                             PR_count += 1
-                            PR_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
+                            PR_examples.append(head + ' ' + word + ' ("' + the_sentence + '")')
                         elif word_lemma not in path_verbs and (word_lemma + ' ' + word) not in exceptions:
                             SF_count += 1
-                            SF_examples.append(head + ' ' + word + ' (' + the_sentence + ')')
+                            SF_examples.append(head + ' ' + word + ' ("' + the_sentence + '")')
                             SF_lemma_examples.append(word_lemma + ' ' + word)
                             break
 
         if pos == "VERB" and the_lemma in path_verbs:
-            VF_count += 1
-            VF_examples.append(word + ' (' + the_sentence + ')')
+            if (word_lemma + ' ' + word) not in path_reduplication:
+                VF_count += 1
+                VF_examples.append(word + ' ("' + the_sentence + '")')
 
 
-    final_SF_string = '; '.join(SF_examples)
-    final_PR_string = '; '.join(PR_examples)
-    final_VF_string = '; '.join(VF_examples)
-    final_adjective_SF_string = '; '.join(Adj_SF_examples)
+    final_SF_string = "\n".join(SF_examples)
+    final_PR_string = '\n'.join(PR_examples)
+    final_VF_string = '\n'.join(VF_examples)
+    final_adjective_SF_string = '\n'.join(Adj_SF_examples)
     final_counts = {'Satellite-Framing': SF_count, 'Verb-Framing': VF_count, 'Path-Reduplication': PR_count}
     final_tokens = {'Satellite-Framing': final_SF_string, 'Verb-Framing': final_VF_string, 'Path-Reduplication': final_PR_string}
     final_changeofstate = {'Adjective Change of State Expressions': Adj_SF_Count, 'Adjective COS Examples': final_adjective_SF_string}
     filename_res = {'filename': filename}
-
-    return {'filename': filename_res, 'counts': final_counts, 'tokens': final_tokens, 'change of state': final_changeofstate}
-
-def write_header_and_data_to_file(header, data, output_filename):
-    """
-
-    :type header - a string.
-    :param header: All the names of the variables from various types of analyzers
-    :type data - list of strings.
-    :param data: The scores of the variables from the various analyzers
-    :param output_filename:
-    :return:
-    """
-    assert Path(output_filename).parent.is_dir(), f'The directory: {Path(output_filename).parent.absolute()} does ' \
-                                                  f'not exist. Cannot create output file. Please create the above ' \
-                                                  f'directory, or choose another file location.'
-    with open(output_filename, 'w', encoding='utf8', newline='') as output_file:
-        output_file.write(header)
-        for d in data:
-            output_file.write(d)
-    logger.info(f'{len(data)} lines of output written to: {output_filename}.')
+    #return {"filename": filename_res, "counts": final_counts, "tokens": final_tokens, "change of state": final_changeofstate}
+    return [filename, SF_count, final_SF_string, VF_count, final_VF_string, PR_count, final_PR_string, Adj_SF_Count, final_adjective_SF_string]
 
 def read_input_text(filename):
     """
@@ -239,25 +222,8 @@ def process(file_path: str, filename):
         results = get_events(filename, analysis)
         return results
 
-def stringify_scores(scores):
+def write_data_to_file(data, output_filename):
     """
-    Scores array is a list of dictionaries
-    Format:
-    [{'filename': filename, 'counts': event_counts, 'tokens': token_results},...]
-    :param scores:
-    :return:
-    """
-    string_scores = ''
-    for sc in scores:
-        for key in sc.keys():
-            for v in sc[key].values():
-                string_scores += f'{v},'
-        string_scores += '\n'
-    return string_scores
-
-def write_header_and_data_to_file(header, data, output_filename):
-    """
-    Based on original function in Lu (2010, 2012), later modified in Spring & Johnson (2022)
     :type header - a string.
     :param header:
     :type data - list of strings.
@@ -269,28 +235,25 @@ def write_header_and_data_to_file(header, data, output_filename):
                                                   f'not exist. Cannot create output file. Please create the above ' \
                                                   f'directory, or choose another file location.'
     with open(output_filename, 'w', encoding='utf8', newline='') as output_file:
-        output_file.write(header)
         for d in data:
             output_file.write(d)
     logger.info(f'{len(data)} lines of output written to: {output_filename}.')
-
-def build_header(scores):
-    header = ''
-    for key in scores[0]:
-        for k in scores[0][key].keys():
-            header += f'{k},'
-    header += '\n'
-    return header
 
 def list_stringify_scores(scores):
     string_scores_list = []
 
     for sc in scores:
-        string_score = ''
-        for key in sc.keys():
-            for v in sc[key].values():
-                string_score += f'{v},'
-        string_score += '\n'
+        string_score = ""
+        string_score += "Filename: " + sc[0] + "\n" + "\n"
+        string_score += "Satellite-Framing Count: " + f"{sc[1]}" + "\n" + "\n"
+        string_score += "Satellite-Framing Examples: " + "\n" + sc[2] + "\n" + "\n"
+        string_score += "Verb-Framing Count: " + f"{sc[3]}" + "\n" + "\n"
+        string_score += "Verb-Framing Examples: " + "\n" + sc[4] + "\n" + "\n"
+        string_score += "Path Reduplication Count: " + f"{sc[5]}" + "\n" + "\n"
+        string_score += "Path Reduplication Examples: " + "\n" + sc[6] + "\n" + "\n"
+        string_score += "Adjectives as Satellites Count: " + f"{sc[7]}" + "\n" + "\n"
+        string_score += "Adjectives as Satellites Examples: " + "\n" + sc[8] + "\n"
+        string_score += "\n" + "\n" + "\n"
         string_scores_list.append(string_score)
     return string_scores_list
 
@@ -302,10 +265,8 @@ def main(input_path):
             result = process(os.path.join(input_filepath, filename), filename)
             scores.append(result)
 
-    header = build_header(scores)
     string_scores = list_stringify_scores(scores)
-    write_header_and_data_to_file(header, string_scores, os.path.join(os.getcwd(),
-                                                                          f'./output/EC_Finder_{len(scores)}.csv'))
+    write_data_to_file(string_scores, os.path.join(os.getcwd(), f'./output/EC_Finder_{len(scores)}.txt'))
 
 
 if __name__ == '__main__':

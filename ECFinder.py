@@ -1,9 +1,8 @@
 import os
 import logging
 from main import list_stringify_scores
-from main import build_header
 from main import process
-from main import write_header_and_data_to_file
+from main import write_data_to_file
 
 logger = logging.getLogger('L1J_EFL_Measures')
 
@@ -18,9 +17,8 @@ def main(input_path, output_file):
             progress_bar.config(text=f"Processing file {filename}")
             scores.append(result)
 
-    header = build_header(scores)
     string_scores = list_stringify_scores(scores)
-    write_header_and_data_to_file(header, string_scores, output_file)
+    write_data_to_file(string_scores, output_file)
     progress_bar.config(text="Files processed successfully.")
 
 
@@ -51,7 +49,7 @@ def doit():
     filename = output_f.get()
     if filename == "":
         filename = "results"
-    the_thing = os.path.join(output, filename + '.csv')
+    the_thing = os.path.join(output, filename + '.txt')
     main(input, the_thing)
 
 def change_le():
