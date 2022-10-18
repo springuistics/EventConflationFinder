@@ -167,7 +167,7 @@ def get_events(filename, spacy_output):
                             break
 
         if pos == "VERB" and the_lemma in path_verbs:
-            if (word_lemma + ' ' + word) not in path_reduplication:
+            if (the_lemma + ' ' + word) not in path_reduplication:
                 VF_count += 1
                 VF_examples.append(word + ' ("' + the_sentence + '")')
 
