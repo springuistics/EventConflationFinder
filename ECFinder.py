@@ -6,14 +6,14 @@ from main import write_data_to_file
 
 logger = logging.getLogger('L1J_EFL_Measures')
 
-def main(input_path, output_file):
+def main(input_path, output_file, language):
     progress_bar.config(text="Processing")
     input_filepath = os.path.join(os.getcwd(), input_path)
 
     scores = []
     for fdx, filename in enumerate(os.listdir(input_filepath)):
         if filename.endswith('.txt'):
-            result = process(os.path.join(input_filepath, filename), filename)
+            result = process(os.path.join(input_filepath, filename), filename, language)
             progress_bar.config(text=f"Processing file {filename}")
             scores.append(result)
 
@@ -44,13 +44,20 @@ def browse_output_folder():
     output_p.set(filepath)
 
 def doit():
-    input = input_p.get()
-    output = output_p.get()
+    lng = gengo.get()
+    input_path = input_p.get()
+    output_path = output_p.get()
     filename = output_f.get()
     if filename == "":
         filename = "results"
-    the_thing = os.path.join(output, filename + '.txt')
-    main(input, the_thing)
+    the_thing = os.path.join(output_path, filename + '.txt')
+    if lng == 2:
+        language_choice = "Japanese"
+    else:
+        language_choice = "English"
+
+    main(input_path, the_thing, language_choice)
+
 
 def change_le():
     llabel.config(text="Select Language: ")
