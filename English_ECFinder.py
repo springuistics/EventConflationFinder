@@ -26,9 +26,10 @@ import tkinter
 from tkinter import filedialog
 from PIL import Image, ImageTk
 m = tkinter.Tk()
+m.configure(bg="#fffcc7")
 m.title('Event Conflation Finder')
-m.minsize(800, 660)
-m.maxsize(800, 660)
+m.minsize(800, 615)
+m.maxsize(800, 615)
 
 input_p = tkinter.StringVar()
 output_p = tkinter.StringVar()
@@ -55,27 +56,15 @@ def doit():
     main(input_path, the_thing, language_choice)
 
 
-def change_le():
-    llabel.config(text="Select Language: ")
-    input_label1.config(text='Input Path for Folder Where Text Files Are Stored:')
-    input_button.config(text='Select Path')
-    output_label.config(text='Where you want the file to be written:')
-    output_button.config(text='Select Path')
-    explanation.config(text='Do not add a file extension or path - just the name of the file. If no name is provided, the name "results" will autoamtically be selected. Caution: If any file with the name currently exists, it will be overwritten.')
-    name_lbl.config(text='File Name:')
-    pro_button.config(text='Process Texts Now')
-
-bigframe = tkinter.Frame(m)
+bigframe = tkinter.Frame(m, background="#fffcc7")
 logo = Image.open("Logo.jpg")
 logoimg = ImageTk.PhotoImage(logo)
 logo_label = tkinter.Label(m, image=logoimg)
 logo_label.image = logoimg
 logo_label.pack(side=tkinter.TOP)
 
-language_frame = tkinter.Frame(m)
-
-input_frame = tkinter.Frame(bigframe, highlightbackground="black", highlightthickness=2, padx=10, pady=10)
-input_label1 = tkinter.Label(input_frame, text='Input Path for Folder Where Text Files Are Stored:', font=("Times New Roman", 14))
+input_frame = tkinter.Frame(bigframe, background="#fffcc7", highlightbackground="black", highlightthickness=2, padx=10, pady=10)
+input_label1 = tkinter.Label(input_frame, background="#fffcc7", text='Input Path for Folder Where Text Files Are Stored:', font=("Times New Roman", 14))
 input_label1.pack(side=tkinter.TOP)
 entry_input = tkinter.Entry(input_frame, textvariable=input_p, width=100, highlightthickness=2, highlightcolor="light blue")
 entry_input.pack(pady=5)
@@ -83,8 +72,8 @@ input_button = tkinter.Button(input_frame, text='Select Path', font=("Helvetica"
 input_button.pack()
 input_frame.pack(pady=5)
 
-output_frame = tkinter.Frame(bigframe, highlightbackground="black", highlightthickness=2, padx=5, pady=10)
-output_label = tkinter.Label(output_frame, text='Where you want the file to be written:', font=("Times New Roman", 14))
+output_frame = tkinter.Frame(bigframe, background="#fffcc7", highlightbackground="black", highlightthickness=2, padx=5, pady=10)
+output_label = tkinter.Label(output_frame, background="#fffcc7", text='Where you want the file to be written:', font=("Times New Roman", 14))
 output_label.pack(side=tkinter.TOP)
 entry_output = tkinter.Entry(output_frame, textvariable=output_p, width=100, highlightthickness=2, highlightcolor="light blue")
 entry_output.pack(pady=5)
@@ -92,23 +81,23 @@ output_button = tkinter.Button(output_frame, text='Select Path', font=("Helvetic
 output_button.pack()
 output_frame.pack(padx=10, pady=10)
 
-name_frame = tkinter.Frame(bigframe, highlightbackground="black", highlightthickness=2, padx=5, pady=10)
-explanation = tkinter.Label(name_frame, text='Do not add a file extension or path - just the name of the file. If no name is provided, the name "results" will autoamtically be selected. Caution: If any file with the name currently exists, it will be overwritten.', font=("Times New Roman", 10), justify=tkinter.LEFT, wraplength=600, width=100)
+name_frame = tkinter.Frame(bigframe, background="#fffcc7", highlightbackground="black", highlightthickness=2, padx=5, pady=10)
+explanation = tkinter.Label(name_frame, background="#fffcc7", text='Do not add a file extension or path - just the name of the file. If no name is provided, the name "results" will autoamtically be selected. Caution: If any file with the name currently exists, it will be overwritten.', font=("Times New Roman", 10), justify=tkinter.LEFT, wraplength=600, width=100)
 explanation.pack(side=tkinter.TOP)
-subframe = tkinter.Frame(name_frame)
+subframe = tkinter.Frame(name_frame, background="#fffcc7")
 subframe.pack(in_=name_frame, anchor="c")
-name_lbl = tkinter.Label(subframe, text='File Name:', font=("Times New Roman", 14))
+name_lbl = tkinter.Label(subframe, background="#fffcc7", text='File Name:', font=("Times New Roman", 14))
 name_lbl.pack(padx=5, pady=5, side=tkinter.LEFT)
 entry_filename = tkinter.Entry(subframe, textvariable=output_f, width=50, highlightthickness=2, highlightcolor="light blue")
 entry_filename.pack(padx=5, pady=5, side=tkinter.LEFT)
 name_frame.pack(padx=10, pady=10)
 
-pro_button = tkinter.Button(bigframe, text='Process Texts Now', font=("Helvetica", 18), width=15, background="#F75538", command=doit)
+pro_button = tkinter.Button(bigframe, fg="white", text='Process Texts Now', font=("Helvetica", 18), width=15, background="#eb690c", command=doit)
 pro_button.pack(side=tkinter.BOTTOM)
 
 bigframe.pack()
 
-progress_bar = tkinter.Label(m, text=" ")
+progress_bar = tkinter.Label(m, background="#fffcc7", text=" ")
 progress_bar.pack()
 
 m.mainloop()
