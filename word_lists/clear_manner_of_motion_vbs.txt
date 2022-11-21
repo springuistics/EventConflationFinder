@@ -109,6 +109,7 @@ mosey
 motor
 motorbike
 motorcycle
+move
 nip
 oar
 pad
@@ -219,6 +220,7 @@ traipse
 tram
 tramp
 transfer
+travel
 trek
 triwrl
 trolley

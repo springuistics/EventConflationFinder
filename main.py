@@ -149,17 +149,17 @@ def get_events(filename, spacy_output):
 
     stative_verbs = ["be", "exist", "appear", "feel", "hear", "look", "see", "seem", "belong", "have", "own", "possess",
                      "like", "live", "want", "wish", "prefer", "love", "hate", "make", "become", "meet", "depend",
-                     "fit", "touch", "matter", "lay", "lie", "find"]
+                     "fit", "touch", "matter", "lay", "lie", "find", "say"]
     likely_dates = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
                     "November", "December", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
                     "Sunday"]
     mm_verbs = load_word_list("word_lists\clear_manner_of_motion_vbs.txt")
-    bare_verbs = ['go', 'come', 'get', 'move', 'travel']
+    bare_verbs = ['go', 'come', 'get']
     path_verbs = load_word_list("word_lists\path_verbs.txt")
     path_reduplication = load_word_list("word_lists\path_reduplication.txt")
     counts_as_motion = ['sit down', 'stand up', 'lay down']
     doesnt_count_double_sat = ['away from', 'off of']
-    exceptions = ["punch on", "light on", "use to", "take to", "talk about"]
+    exceptions = ["punch on", "light on", "use to", "take to", "talk about", "known to", "called to"]
     satellites = load_word_list("word_lists\satellites.txt")
     mchange_verbs = load_word_list("word_lists\manner_of_change_verbs.txt")
     vchange_verbs = load_word_list("word_lists\path_of_change_verbs.txt")
@@ -221,7 +221,19 @@ def get_events(filename, spacy_output):
                             else:
                                 x += 1
                         break
-                    elif word_match == head and word_lemma in mchange_verbs or word_lemma in bare_verbs:
+                    elif word_match == head and word_lemma in mchange_verbs:
+                        x = 0
+                        while x < i:
+                            double_match = spacy_words[x]
+                            if head == double_match:
+                                Change_SF_Count += 1
+                                Change_SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
+                                Change_SF_lemma_examples.append(word_lemma + ' ' + word)
+                                break
+                            else:
+                                x += 1
+                        break
+                    elif word_match == head and word_lemma in bare_verbs:
                         x = 0
                         while x < i:
                             double_match = spacy_words[x]
