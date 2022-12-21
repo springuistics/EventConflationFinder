@@ -96,7 +96,6 @@ jog
 journey
 jump
 kayak
-lead
 leap
 limp
 lollop

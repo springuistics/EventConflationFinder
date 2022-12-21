@@ -158,14 +158,16 @@ def get_events(filename, spacy_output):
     path_reduplication = load_word_list("word_lists\path_reduplication.txt")
     counts_as_motion = load_word_list("word_lists\count_motion.txt")
     counts_as_change = load_word_list("word_lists\count_change.txt")
+    counts_as_change_multiword = load_word_list("word_lists\count_change_multiword.txt")
     counts_as_other = load_word_list("word_lists\common_others.txt")
-    doesnt_count_double_sat = ['away from', 'off of']
+    doesnt_count_double_sat = ['away from', 'off of', 'in in', 'under in']
     exceptions = load_word_list("word_lists\is_not_s_framing.txt")
     satellites = load_word_list("word_lists\satellites.txt")
     mchange_verbs = load_word_list("word_lists\manner_of_change_verbs.txt")
     vchange_verbs = load_word_list("word_lists\path_of_change_verbs.txt")
     change_redup = load_word_list("word_lists\change_reduplication.txt")
     change_redup2 = load_word_list("word_lists\change_redup_multiword.txt")
+    change_adj_exceptions = load_word_list("word_lists\change_adj_exceptions.txt")
 
     Motion_SF_count = 0
     Change_SF_Count = 0
@@ -209,9 +211,10 @@ def get_events(filename, spacy_output):
         the_sentence = the_sentence.rstrip()
         the_lemma = spacy_lemmas[i]
         the_kids = spacy_children[i]
+        the_length = len(spacy_deps)
 
         if pos == "ADJ": #handles adjectives as satellites
-            if head in list_o_verbs:
+            if head in list_o_verbs and word not in change_adj_exceptions:
                 for y in range(0, len(list_o_verbs)):
                     word_match = list_o_verbs[y]
                     word_lemma = list_o_vb_lemmas[y]
@@ -225,7 +228,8 @@ def get_events(filename, spacy_output):
                         Other_SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
                         Other_SF_lemma_examples.append(word_lemma + ' ' + word)
                         break
-                    elif word_match == head and word_lemma in mchange_verbs and (word_lemma + ' ' + word) in change_redup:
+                    elif word_match == head and word_lemma in mchange_verbs and (
+                                    word_lemma + ' ' + word) in change_redup:
                         x = 0
                         while x < i:
                             double_match = spacy_words[x]
@@ -274,7 +278,7 @@ def get_events(filename, spacy_output):
                                     x += 1
                             break
                         else:
-                            x = i-20
+                            x = i - 20
                             while x < i:
                                 double_match = spacy_words[x]
                                 if head == double_match:
@@ -285,7 +289,6 @@ def get_events(filename, spacy_output):
                                 else:
                                     x += 1
                             break
-
 
         if pos == "ADP" and word in satellites: #handles most satellites
             if head in satellites and (head + ' ' + word) not in doesnt_count_double_sat:
@@ -302,17 +305,7 @@ def get_events(filename, spacy_output):
                                 SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
                                 SF_lemma_examples.append(word_lemma + ' ' + word)
                                 break
-                            elif head in problem_verbs and (word_lemma + ' ' + word) in counts_as_motion:
-                                Motion_SF_count += 1
-                                SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
-                                SF_lemma_examples.append(word_lemma + ' ' + word)
-                                break
                             elif word_match == head and (word_lemma + ' ' + word) in counts_as_change:
-                                Change_SF_Count += 1
-                                Change_SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
-                                Change_SF_lemma_examples.append(word_lemma + ' ' + word)
-                                break
-                            elif head in problem_verbs and (word_lemma + ' ' + word) in counts_as_change:
                                 Change_SF_Count += 1
                                 Change_SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
                                 Change_SF_lemma_examples.append(word_lemma + ' ' + word)
@@ -327,7 +320,7 @@ def get_events(filename, spacy_output):
                                 Other_SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
                                 Other_SF_lemma_examples.append(word_lemma + ' ' + word)
                                 break
-                            elif head in problem_verbs and (word_lemma + ' ' + word) in counts_as_other:
+                            elif head in problem_verbs and (head + ' ' + word) in counts_as_other:
                                 Other_SF_Count += 1
                                 Other_SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
                                 Other_SF_lemma_examples.append(word_lemma + ' ' + word)
@@ -366,7 +359,7 @@ def get_events(filename, spacy_output):
                                 Unsure_SF_lemma_examples.append(word_lemma + ' ' + word)
                                 break
 
-                elif spacy_words[i+1] not in likely_dates and spacy_pos[i+1] != "NUM" and spacy_words[i+2] not in ["morning", "evening", "night"] and spacy_pos[i+1] != "PROPN":
+                elif spacy_words[i+1] not in likely_dates and spacy_pos[i+1] != "NUM" and spacy_words[i+2] not in ["morning", "evening", "night"]:
                     for y in range(0, len(list_o_verbs)):
                         word_match = list_o_verbs[y]
                         word_lemma = list_o_vb_lemmas[y]
@@ -375,17 +368,7 @@ def get_events(filename, spacy_output):
                             SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
                             SF_lemma_examples.append(word_lemma + ' ' + word)
                             break
-                        elif head in problem_verbs and (word_lemma + ' ' + word) in counts_as_motion:
-                            Motion_SF_count += 1
-                            SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
-                            SF_lemma_examples.append(word_lemma + ' ' + word)
-                            break
                         elif word_match == head and (word_lemma + ' ' + word) in counts_as_change:
-                            Change_SF_Count += 1
-                            Change_SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
-                            Change_SF_lemma_examples.append(word_lemma + ' ' + word)
-                            break
-                        elif head in problem_verbs and (word_lemma + ' ' + word) in counts_as_change:
                             Change_SF_Count += 1
                             Change_SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
                             Change_SF_lemma_examples.append(word_lemma + ' ' + word)
@@ -430,11 +413,23 @@ def get_events(filename, spacy_output):
                                 Change_PR_count += 1
                                 Change_PR_examples.append(head + ' ' + word + spacy_words[i + 1] + ' ("' + the_sentence + '")')
                                 break
+                            elif (word + ' ' + spacy_words[i + 1]) in counts_as_change_multiword or (word + ' ' + spacy_words[i + 2]) in counts_as_change_multiword:
+                                Change_SF_Count += 1
+                                Change_SF_examples.append(head + ' ' + word + ' ' + spacy_words[i+1] + ' ("' + the_sentence + '")')
+                                Change_SF_lemma_examples.append(word_lemma + ' ' + word)
+                                break
                         elif word_match == head and word_lemma in mchange_verbs and (word_lemma + ' ' + word) not in exceptions:
-                            Change_SF_Count += 1
-                            Change_SF_examples.append(head + ' ' + word + ' ("' + the_sentence + '")')
-                            Change_SF_lemma_examples.append(word_lemma + ' ' + word)
-                            break
+                            if word in ["in", "into"] and (word + ' ' + spacy_words[i + 1]) in counts_as_change_multiword:
+                                Change_SF_Count += 1
+                                Change_SF_examples.append(
+                                    head + ' ' + word + ' ' + spacy_words[i + 1] + ' ("' + the_sentence + '")')
+                                Change_SF_lemma_examples.append(word_lemma + ' ' + word)
+                                break
+                            else:
+                                Change_SF_Count += 1
+                                Change_SF_examples.append(head + ' ' + word + ' ("' + the_sentence + '")')
+                                Change_SF_lemma_examples.append(word_lemma + ' ' + word)
+                                break
                         elif word_match == head and word_lemma not in stative_verbs and (
                                 word_lemma + ' ' + word) not in exceptions:
                             Unsure_SF_count += 1
@@ -455,21 +450,23 @@ def get_events(filename, spacy_output):
                         SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
                         SF_lemma_examples.append(word_lemma + ' ' + word)
                         break
-                    elif head in problem_verbs and (word_lemma + ' ' + word) in counts_as_motion:
-                        Motion_SF_count += 1
-                        SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
-                        SF_lemma_examples.append(word_lemma + ' ' + word)
-                        break
+                    elif head in problem_verbs and head in ["reach", "reaches", "reached", "Reach", "Reaches", "Reached"]:
+                            if ('reach ' + word) in counts_as_motion:
+                                Motion_SF_count += 1
+                                SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
+                                SF_lemma_examples.append(word_lemma + ' ' + word)
+                                break
                     elif word_match == head and (word_lemma + ' ' + word) in counts_as_change:
                         Change_SF_Count += 1
                         Change_SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
                         Change_SF_lemma_examples.append(word_lemma + ' ' + word)
                         break
-                    elif head in problem_verbs and (word_lemma + ' ' + word) in counts_as_change:
-                        Change_SF_Count += 1
-                        Change_SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
-                        Change_SF_lemma_examples.append(word_lemma + ' ' + word)
-                        break
+                    elif head in problem_verbs and head in ["turn", "turns", "Turn", "Turns", "Turned", "turned"]:
+                            if ("turn " + word) in counts_as_change:
+                                Change_SF_Count += 1
+                                Change_SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')
+                                Change_SF_lemma_examples.append(word_lemma + ' ' + word)
+                                break
                     elif word_match == head and (word_lemma + ' ' + word) in counts_as_other:
                         Other_SF_Count += 1
                         Other_SF_examples.append(word_match + ' ' + word + ' ("' + the_sentence + '")')

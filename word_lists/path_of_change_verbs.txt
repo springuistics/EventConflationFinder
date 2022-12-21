@@ -424,7 +424,6 @@ tire
 toughen
 trap
 tripple
-tuck
 unfasten
 unhitch
 unify
