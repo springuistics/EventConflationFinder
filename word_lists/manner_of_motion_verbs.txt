@@ -74,9 +74,11 @@ goosestep
 guide
 hasten
 haul
+head
 heave
 heft
 helicopter
+herd
 hike
 hobble
 hoist
@@ -177,6 +179,7 @@ sleepwalk
 sleigh
 slide
 slink
+slip
 slither
 slog
 slouch
@@ -187,6 +190,7 @@ speed
 spin
 squaredance
 stagger
+step
 stomp
 stray
 streak
@@ -233,6 +237,7 @@ tug
 turn
 twist
 vault
+venture
 waddle
 wade
 walk

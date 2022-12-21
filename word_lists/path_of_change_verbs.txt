@@ -1,4 +1,5 @@
 absolve
+absorb
 abstract
 accelerate
 accumulate
@@ -35,6 +36,7 @@ beautify
 become
 bed
 beget
+befall
 bench
 bequeth
 blend
@@ -79,6 +81,7 @@ conjoin
 connect
 consolidate
 convene
+convict
 cool
 core
 crate
@@ -128,6 +131,7 @@ disabuse
 disappear
 disarm
 disassemble
+discard
 discharge
 disconnect
 disencomber
@@ -149,10 +153,12 @@ dock
 double
 drain
 draw
+drown
 dry
 dull
 eject
 eliminate
+electrify
 emanate
 emancipate
 embellish
@@ -161,6 +167,7 @@ emerge
 empty
 emulsify
 encircle
+enclose
 encrust
 endow
 energize
@@ -232,6 +239,7 @@ hybridize
 imbue
 impound
 impregnate
+imprison
 improve
 increase
 incubate
@@ -270,6 +278,7 @@ liquefy
 lodge
 loop
 loosen
+lose
 louse
 macerate
 magnetize
@@ -305,12 +314,14 @@ oxidize
 pair
 pale
 part
+partner
 partition
 pasture
 perforate
 perish
 petrify
 pierce
+plant
 plummet
 pocket
 polarize
@@ -329,6 +340,7 @@ radiate
 recall
 reclaim
 recover
+recycle
 redeem
 refund
 regain
@@ -340,6 +352,7 @@ remove
 render
 reopen
 repay
+replace
 replenish
 repopulate
 reposses
@@ -363,6 +376,7 @@ sheathe
 shell
 shelter
 shelve
+shift
 shrivel
 shorten
 shrink
@@ -391,6 +405,7 @@ stiffen
 straighten
 stratify
 strenghten
+strip
 submerge
 subtract
 sunder
@@ -409,6 +424,7 @@ tire
 toughen
 trap
 tripple
+tuck
 unfasten
 unhitch
 unify

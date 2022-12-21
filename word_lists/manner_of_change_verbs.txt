@@ -33,6 +33,7 @@ bloom
 blot
 blow
 bludgeon
+blurt
 board
 bombard
 bond
@@ -42,6 +43,7 @@ bracket
 brain
 bread
 break
+brew
 brick
 bronze
 bruise
@@ -134,6 +136,7 @@ cuff
 cull
 cultivate
 cure
+curl
 curtain
 cut
 dab
@@ -178,6 +181,7 @@ extort
 fade
 feather
 fence
+fend
 ferment
 fidget
 filch
@@ -293,6 +297,7 @@ lock
 lodge
 mangle
 mantle
+mark
 mash
 mask
 milk
@@ -375,7 +380,9 @@ poster
 pound
 pour
 powder
+press
 prick
+prop
 prune
 pry
 pulp
@@ -430,6 +437,7 @@ sandpaper
 sap
 saw
 scalp
+scare
 scatter
 scoop
 scour
@@ -439,6 +447,7 @@ scratch
 screech
 screen
 screw
+scrub
 sculpt
 seal
 season
@@ -529,6 +538,7 @@ stack
 stain
 staple
 starch
+starve
 stash
 steal
 steam
@@ -545,6 +555,7 @@ strangle
 strap
 stream
 strew
+stretch
 strike
 string
 strip
@@ -598,7 +609,6 @@ truncheon
 tuck
 tug
 turf
-turn
 twist
 twitch
 unbutton

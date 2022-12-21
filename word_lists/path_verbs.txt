@@ -7,12 +7,15 @@ circle
 cross
 depart
 descend
+drop
 enter
 escape
 exit
 fall
 follow
 join
+land
+lead
 leave
 near
 pass
