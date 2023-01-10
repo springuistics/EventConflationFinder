@@ -3,22 +3,31 @@ import logging
 from main import list_stringify_scores
 from main import process
 from main import write_data_to_file
+from main import write_data_to_csv
+from main import csv_prep_scores
+from main import build_csv_header
 
 logger = logging.getLogger('L1J_EFL_Measures')
 
-def main(input_path, output_file, language):
+def main(input_path, output_file, mode):
     progress_bar.config(text="Processing")
     input_filepath = os.path.join(os.getcwd(), input_path)
 
     scores = []
     for fdx, filename in enumerate(os.listdir(input_filepath)):
         if filename.endswith('.txt'):
-            result = process(os.path.join(input_filepath, filename), filename, language)
+            result = process(os.path.join(input_filepath, filename), filename, mode)
             progress_bar.config(text=f"Processing file {filename}")
             scores.append(result)
 
-    string_scores = list_stringify_scores(scores)
-    write_data_to_file(string_scores, output_file)
+    if mode == "Full":
+        string_scores = list_stringify_scores(scores)
+        write_data_to_file(string_scores, output_file)
+    elif mode =="Numbers":
+        string_scores = csv_prep_scores(scores)
+        header = build_csv_header(scores)
+        write_data_to_csv(header, string_scores, output_file)
+
     progress_bar.config(text="Files processed successfully.")
 
 
@@ -26,15 +35,16 @@ import tkinter
 from tkinter import filedialog
 from PIL import Image, ImageTk
 m = tkinter.Tk()
+m.wm_iconbitmap('ecficon.ico')
 m.configure(bg="#fffcc7")
 m.title('Event Conflation Finder')
-m.minsize(800, 615)
-m.maxsize(800, 615)
+m.minsize(800, 645)
+m.maxsize(800, 645)
 
 input_p = tkinter.StringVar()
 output_p = tkinter.StringVar()
 output_f = tkinter.StringVar()
-gengo = tkinter.IntVar()
+mode = tkinter.IntVar()
 
 def browse_input_folder():
     filepath = filedialog.askdirectory()
@@ -48,12 +58,21 @@ def doit():
     input_path = input_p.get()
     output_path = output_p.get()
     filename = output_f.get()
+    mode_selection = mode.get()
+    if mode_selection == 2:
+        mode_selection = "Numbers"
+    else:
+        mode_selection = "Full"
+
     if filename == "":
         filename = "results"
-    the_thing = os.path.join(output_path, filename + '.txt')
-    language_choice = "English"
 
-    main(input_path, the_thing, language_choice)
+    if mode_selection == "Full":
+        the_thing = os.path.join(output_path, filename + '.txt')
+    if mode_selection == "Numbers":
+        the_thing = os.path.join(output_path, filename + '.csv')
+
+    main(input_path, the_thing, mode_selection)
 
 
 bigframe = tkinter.Frame(m, background="#fffcc7")
@@ -62,6 +81,17 @@ logoimg = ImageTk.PhotoImage(logo)
 logo_label = tkinter.Label(m, image=logoimg)
 logo_label.image = logoimg
 logo_label.pack(side=tkinter.TOP)
+
+mode_frame = tkinter.Frame(m, background="#fffcc7")
+modesub = tkinter.Frame(mode_frame, background="#fffcc7")
+mode_label = tkinter.Label(modesub, text="Select Mode: ", background="#fffcc7", font=("Times New Roman", 12))
+mode_label.pack(padx=10, side=tkinter.LEFT)
+R1 = tkinter.Radiobutton(modesub, text="Full Data", background="#fffcc7", font=("Times New Roman", 11), variable=mode, value=1)
+R1.pack(padx=10, side=tkinter.LEFT)
+R2 = tkinter.Radiobutton(modesub, text="Just Numbers", background="#fffcc7", font=("Times New Roman", 11), variable=mode, value=2)
+R2.pack(padx=10, side=tkinter.LEFT)
+modesub.pack(in_=mode_frame, anchor="c")
+mode_frame.pack(pady=5)
 
 input_frame = tkinter.Frame(bigframe, background="#fffcc7", highlightbackground="black", highlightthickness=2, padx=10, pady=10)
 input_label1 = tkinter.Label(input_frame, background="#fffcc7", text='Input Path for Folder Where Text Files Are Stored:', font=("Times New Roman", 14))

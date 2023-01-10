@@ -4,8 +4,7 @@ import spacy
 from pathlib import Path
 import logging
 import csv
-
-logger = logging.getLogger('EV_Finder')
+logger = logging.getLogger('ECFinder')
 
 def safe_division(x, y):
     """
@@ -31,90 +30,8 @@ def load_word_list(filename):
         clean_words.remove('')  # remove any empty strings.
     return clean_words
 
-def get_events_j(filename, spacy_output):
-    """
-    Splits SpaCy into relevant elements for Japanese, makes counts of verb- and satellite-framing based on lists.
-    :param filename:
-    :param spacy_output:
-    :return:
-    """
 
-    spacy_words = []
-    spacy_lemmas = []
-    spacy_pos = []
-    spacy_deps = []
-    spacy_heads = []
-    spacy_children = []
-    spacy_sentences = []
-
-    for idx, token in enumerate(spacy_output):
-        spacy_words.append(spacy_output[idx].text)
-        spacy_lemmas.append(spacy_output[idx].lemma_)
-        spacy_pos.append(spacy_output[idx].pos_)
-        spacy_deps.append(spacy_output[idx].dep_)
-        spacy_heads.append(spacy_output[idx].head)
-        spacy_sentences.append(spacy_output[idx].sent)
-        kids = []
-        for x in spacy_output[idx].children:
-            kids.append(x)
-        spacy_children.append(kids)
-
-    stative_verbs = ["です"]
-
-    satellites = ["まで"]
-
-    path_verbs = ["渡る"]
-
-    SF_count = 0
-    Adj_SF_Count = 0
-    VF_count = 0
-    PR_count = 0
-    Adj_SF_examples = []
-    SF_examples = []
-    SF_lemma_examples = []
-    PR_examples = []
-    VF_examples = []
-    list_o_verbs = []
-    list_o_vb_lemmas = []
-
-    for i in range(0, len(spacy_pos)):
-        pos = spacy_pos[i]
-        verb_lemma = spacy_lemmas[i]
-        verb = spacy_words[i]
-        if pos == "VERB":
-            list_o_verbs.append(verb)
-            list_o_vb_lemmas.append(verb_lemma)
-
-    for i in range(0, len(spacy_deps)):
-        pos = spacy_pos[i]
-        word = spacy_words[i]
-        head = spacy_heads[i]
-        head = f'{head}'
-        the_sentence = spacy_sentences[i]
-        the_sentence = f"{the_sentence}"
-        the_sentence = the_sentence.rstrip()
-        the_lemma = spacy_lemmas[i]
-
-        if pos == "VERB" and the_lemma in path_verbs:
-            VF_count += 1
-            VF_examples.append(word + ' ("' + the_sentence + '")')
-
-        if pos == "PART" and word in satellites:
-            SF_count += 1
-            SF_lemma_examples.append(word + head)
-            SF_examples.append(word + head + ' ("' + the_sentence + '")')
-
-
-
-
-    final_SF_string = "\n".join(SF_examples)
-    final_PR_string = '\n'.join(PR_examples)
-    final_VF_string = '\n'.join(VF_examples)
-    final_adjective_SF_string = '\n'.join(Adj_SF_examples)
-    return [filename, SF_count, final_SF_string, VF_count, final_VF_string, PR_count, final_PR_string, Adj_SF_Count, final_adjective_SF_string]
-
-
-def get_events(filename, spacy_output):
+def get_events(filename, spacy_output, mode):
     """
     Splits SpaCy into relevant elements, makes counts of verb- and satellite-framing based on lists.
     Also pulls the specific parts from the text for user checking.
@@ -550,9 +467,17 @@ def get_events(filename, spacy_output):
     final_change_PR_string = '\n'.join(Change_PR_examples)
     final_other_SF_string = '\n'.join(Other_SF_examples)
     final_unsure_SF_string = '\n'.join(Unsure_SF_examples)
-    return [filename, Motion_SF_count, final_motion_SF_string, Motion_VF_count, final_motion_VF_string, Motion_PR_count,
-            final_motion_PR_string, Change_SF_Count, final_change_SF_string, Change_VF_Count, final_change_VF_string,
-            Change_PR_count, final_change_PR_string, Other_SF_Count, final_other_SF_string, Unsure_SF_count, final_unsure_SF_string]
+    if mode == "Full":
+        return [filename, Motion_SF_count, final_motion_SF_string, Motion_VF_count, final_motion_VF_string, Motion_PR_count,
+                final_motion_PR_string, Change_SF_Count, final_change_SF_string, Change_VF_Count, final_change_VF_string,
+                Change_PR_count, final_change_PR_string, Other_SF_Count, final_other_SF_string, Unsure_SF_count, final_unsure_SF_string]
+    elif mode == "Numbers":
+        Motion_SF_Percent = safe_division(Motion_SF_count, (Motion_SF_count + Motion_VF_count + Motion_PR_count))
+        Change_SF_Percent = safe_division(Change_SF_Count, (Change_SF_Count + Change_VF_Count + Change_PR_count))
+        Change_and_other_SF_Percent = safe_division((Change_SF_Count + Other_SF_Count), (Change_SF_Count + Change_VF_Count + Change_PR_count + Other_SF_Count))
+        Motion_and_Change_SF_Percent = safe_division((Motion_SF_count + Change_SF_Count), (Motion_VF_count + Motion_SF_count + Change_SF_Count + Change_VF_Count))
+        All_SF_Percent = safe_division((Motion_SF_count + Change_SF_Count + Other_SF_Count), (Motion_VF_count + Change_VF_Count + Motion_SF_count + Change_SF_Count + Other_SF_Count + Motion_PR_count + Change_PR_count))
+        return {"filename": filename, "SF_Motion_Count": Motion_SF_count, "VF_Motion_Count": Motion_VF_count, "Path_Redup_Motion": Motion_PR_count, "SF_Change_Count": Change_SF_Count, "VF_Change_Count": Change_VF_Count, "Path_Redup_Change": Change_PR_count, "SF_Other_Count": Other_SF_Count, "%SF_Motion": Motion_SF_Percent, "%SF_Change": Change_SF_Percent, "%SF_Change_and_Other": Change_and_other_SF_Percent, "%SF_Motion_and_Change": Motion_and_Change_SF_Percent, "%SF_Overall": All_SF_Percent}
 
 def read_input_text(filename):
     """
@@ -573,7 +498,7 @@ def read_input_text(filename):
     finally:
         return text_lines
 
-def process(file_path: str, filename, langauge):
+def process(file_path: str, filename, mode_setting):
     """
     Simply preps files by sending files to get read and handling encoding errors.
     Also gets singular analysis from SpaCy, then sends to analyzer.
@@ -588,22 +513,10 @@ def process(file_path: str, filename, langauge):
         results = get_events(filename, "")
         return results
     else:
-        if langauge == "English":
-            nlp = spacy.load("en_core_web_lg")
-            analysis = nlp(input_text)
-            results = get_events(filename, analysis)
-            return results
-
-        if langauge == "Japanese":
-            nlp = spacy.load("ja_core_news_sm")
-            analysis = nlp(input_text)
-            results = get_events_j(filename, analysis)
-            return results
-
-
-
-
-
+         nlp = spacy.load("en_core_web_lg")
+         analysis = nlp(input_text)
+         results = get_events(filename, analysis, mode_setting)
+         return results
 
 def write_data_to_file(data, output_filename):
     """
@@ -659,17 +572,60 @@ def list_stringify_scores(scores):
         string_scores_list.append(string_score)
     return string_scores_list
 
-def main(input_path):
+def csv_prep_scores(scores):
+    """
+    Scores go like this in this order. Number is there for ease of reference.
+    (0)filename, (1)Motion_SF_count, (2)final_motion_SF_string, (3)Motion_VF_count, (4)final_motion_VF_string,
+    (5)Motion_PR_count, (6)final_motion_PR_string, (7)Change_SF_Count, (8)final_change_SF_string, (9)Change_VF_Count,
+    (10)final_change_VF_string, (11)Change_PR_count, (12)final_change_PR_string, (13)Other_SF_count,
+    (14)final_other_SF_string, (15)Unsure_SF_count, (16)final_unsure_SF_string,
+    :param scores:
+    :return:
+    """
+    string_scores_list = []
+
+    for sc in scores:
+        string_score = ''
+        for value in sc.values():
+            string_score += f'{value},'
+        string_score += '\n'
+        string_scores_list.append(string_score)
+    return string_scores_list
+
+def build_csv_header(scores):
+    header = ''
+    for key in scores[0].keys():
+        header += f'{key},'
+    header += '\n'
+    return header
+
+def write_data_to_csv(header, data, output_filename):
+    assert Path(output_filename).parent.is_dir(), f'The directory: {Path(output_filename).parent.absolute()} does ' \
+                                                  f'not exist. Cannot create output file. Please create the above ' \
+                                                  f'directory, or choose another file location.'
+    with open(output_filename, 'w', encoding='utf8', newline='') as output_file:
+        output_file.write(header)
+        for d in data:
+            output_file.write(d)
+    logger.info(f'{len(data)} lines of output written to: {output_filename}.')
+
+
+def main(input_path, mode_setting):
     input_filepath = os.path.join(os.getcwd(), input_path)
     settei_gengo = "English"
     scores = []
     for fdx, filename in enumerate(os.listdir(input_filepath)):
         if filename.endswith('.txt'):
-            result = process(os.path.join(input_filepath, filename), filename, settei_gengo)
+            result = process(os.path.join(input_filepath, filename), filename, settei_gengo, mode_setting)
             scores.append(result)
 
-    string_scores = list_stringify_scores(scores)
-    write_data_to_file(string_scores, os.path.join(os.getcwd(), f'./output/EC_Finder_{len(scores)}.txt'))
+    if mode_setting == "Full":
+        string_scores = list_stringify_scores(scores)
+        write_data_to_file(string_scores, os.path.join(os.getcwd(), f'./output/EC_Finder_{len(scores)}.txt'))
+    elif mode_setting =="Numbers":
+        string_scores = csv_prep_scores(scores)
+        header = build_csv_header(scores)
+        write_data_to_csv(header, string_scores, os.path.join(os.getcwd(), f'./output/EC_Finder_{len(scores)}.csv'))
 
 
 if __name__ == '__main__':
