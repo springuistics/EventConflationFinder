@@ -84,7 +84,7 @@ logo_label.pack(side=tkinter.TOP)
 
 mode_frame = tkinter.Frame(m, background="#fffcc7")
 modesub = tkinter.Frame(mode_frame, background="#fffcc7")
-mode_label = tkinter.Label(modesub, text="Select Mode: ", background="#fffcc7", font=("Times New Roman", 12))
+mode_label = tkinter.Label(modesub, text="Select Output Mode: ", background="#fffcc7", font=("Times New Roman", 12))
 mode_label.pack(padx=10, side=tkinter.LEFT)
 R1 = tkinter.Radiobutton(modesub, text="Full Data", background="#fffcc7", font=("Times New Roman", 11), variable=mode, value=1)
 R1.pack(padx=10, side=tkinter.LEFT)
