@@ -77,7 +77,6 @@ def get_events(filename, spacy_output, mode):
     counts_as_change = load_word_list("word_lists\count_change.txt")
     counts_as_change_multiword = load_word_list("word_lists\count_change_multiword.txt")
     counts_as_other = load_word_list("word_lists\common_others.txt")
-    doesnt_count_double_sat = ['away from', 'off of', 'in in', 'under in']
     exceptions = load_word_list("word_lists\is_not_s_framing.txt")
     satellites = load_word_list("word_lists\satellites.txt")
     mchange_verbs = load_word_list("word_lists\manner_of_change_verbs.txt")
@@ -208,7 +207,7 @@ def get_events(filename, spacy_output, mode):
                             break
 
         if pos == "ADP" and word in satellites: #handles most satellites
-            if head in satellites and (head + ' ' + word) not in doesnt_count_double_sat:
+            if head in ['back', 'through', 'from']:
                 Motion_SF_count += 1
                 SF_examples.append(head + ' ' + word + ' ("' + the_sentence + '")')
             elif head in list_o_verbs:
@@ -563,7 +562,7 @@ def get_events(filename, spacy_output, mode):
                                 break
 
         if pos == "ADV" and word in satellites: #handles particles marked as adverbs as satellites
-            if head in satellites and (head + ' ' + word) not in doesnt_count_double_sat:
+            if head in ['back', 'through', 'from']:
                 Motion_SF_count += 1
                 SF_examples.append(head + ' ' + word + ' ("' + the_sentence + '")')
             elif head in list_o_verbs:
@@ -721,7 +720,7 @@ def process(file_path: str, filename, mode_setting):
         results = get_events(filename, "")
         return results
     else:
-         nlp = spacy.load("en_core_web_lg")
+         nlp = spacy.load("en_core_web_trf")
          analysis = nlp(input_text)
          results = get_events(filename, analysis, mode_setting)
          return results

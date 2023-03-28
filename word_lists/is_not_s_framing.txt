@@ -6,6 +6,7 @@ light on
 punch on
 shot in
 shot on
+sit in
 snap back
 stolen from
 swim in
