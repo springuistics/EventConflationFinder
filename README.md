@@ -1,6 +1,6 @@
 # EventConflationFinder
 If you use this tool, please cite:
-XXX coming soon
+Spring, R., & Ono, N. (2024). Creating an automated tool to assist with event-conflation studies: An explanation and argument for its importance. Research Methods in Applied Linguistics, 3(1), 100054. https://doi.org/10.1016/j.rmal.2023.100054
 
 Analyzes text, finds and counts satellite-framed and verb-framed expressions in English (as of 10/28/2022) and Japanese (coming soon). 
 
@@ -8,15 +8,17 @@ The tool distinguishes between motion and change-of-state expressions and furthe
 
 Counts, items, and example sentences for checking are output by the tool.
 
-Currently (as of 01/10/2023) the tool can be used as a GUI or from command line / pycharm / etc.
+Currently (as of 10/01/2023) the tool can be used as a GUI or from command line / pycharm / etc.
 
 The GUI form of the tool accepts information regarding the folder where a batch of text files are stored. It analyzes each txt file in the folder.
 
 The GUI form also allows the user to select the path and file name for the output file.
 
-Currently (as of 01/10/2023) the main form of the tool allows users to select the form of the output. 
+Currently (as of 10/01/2023) the main form of the tool allows users to select the form of the output. 
 Selecting "Full Data" outputs a single text file that contains the information for all of the text files in the input path including counts of different types of events, the specific event forms and the sentences from which they were taken. 
 This mode also includes all "unsure" examples and is therefore the best mode for a robust qualitative analysis. Sample output looks as follows:
+
+Updates to word list and requirements file added on 5/17/2024
 
 
 <example output for "Full_Data"> 
