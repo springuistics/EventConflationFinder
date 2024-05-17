@@ -163,6 +163,7 @@ shamble
 shepherd
 ship
 shove
+shoot
 shuffle
 sidle
 skate
@@ -209,7 +210,6 @@ tack
 tango
 tapdance
 taxi
-tear
 throw
 thrust
 tiptoe
@@ -280,3 +280,4 @@ rise
 sink
 tail
 track
+whisk

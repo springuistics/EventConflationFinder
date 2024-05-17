@@ -152,7 +152,6 @@ divorce
 dock
 double
 drain
-draw
 drown
 dry
 dull
@@ -302,7 +301,6 @@ neaten
 neutralize
 nitrify
 obliterate
-offer
 omit
 open
 ossify
@@ -412,6 +410,7 @@ surround
 sweeten
 tame
 taper
+tear
 tense
 thaw
 thicken

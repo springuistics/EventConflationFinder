@@ -12,6 +12,7 @@ enter
 escape
 exit
 fall
+flee
 follow
 join
 land

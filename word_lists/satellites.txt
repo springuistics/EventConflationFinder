@@ -19,9 +19,12 @@ below
 beneath
 beside
 between
+betwixt
 beyond
 down
+forth
 from
+fro
 in
 inside
 into
